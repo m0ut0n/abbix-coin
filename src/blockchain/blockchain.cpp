@@ -1,8 +1,10 @@
 #include "blockchain.hpp"
-
+#include <ostream>
+#include <iostream>
+#include <iterator>
 Blockchain::Blockchain()
 {
-    chain.emplace_back(Block(0,"Genesis"));
+    chain.emplace_back(Block(0,"ABX TO THE MOOOON"));
     difficulty = 1;
 }
 void Blockchain::add_block(Block new_block)

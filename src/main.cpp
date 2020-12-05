@@ -1,5 +1,5 @@
 #include "blockchain/blockchain.hpp"
-
+#include <fstream>
 int main()
 {
     Blockchain block_chain = Blockchain();

@@ -6,7 +6,6 @@
 #include <time.h>
 #include "block.hpp"
 #include <sstream>
-void DisplayMessageDigest(unsigned *message_digest);
 Block::Block(int indexIn, const std::string &dataIn) : index(indexIn), data(dataIn)
 {
 
@@ -16,13 +15,14 @@ inline std::string Block::calculate_hash() const
 {
     time_t timer;
     std::stringstream ss;
+    SHA1 checksum;
     ss << index << prev_hash << time(&timer) << data << proof_no;
-    return sha256(ss.str());
+    checksum.update(ss);
+    return checksum.final();
 }
 void Block::mineblock(int Difficulty)
 {
     char cstr[Difficulty + 1];
-    std::cout<<cstr;
     for (int i = 0; i < Difficulty; ++i)
     {
         cstr[i] = '0';
@@ -30,12 +30,31 @@ void Block::mineblock(int Difficulty)
     cstr[Difficulty] = '\0';
 
     std::string str(cstr);
+    int i = 0;
+
     do
     {
+        i++;
         hash = calculate_hash();
     }
 
    while (hash.substr(0, Difficulty) != str);
 
-    std::cout << "Block mined: " << hash << std::endl;
+    std::cout <<i/1000<<"kh/s Block mined: " << hash << std::endl;
+}
+bool Block::check_validity(Block prev_block,Block block)
+{
+    if (prev_block.index +1 != block.index)
+    {
+        return false;
+    }
+    else if (prev_block.calculate_hash() != block.hash)
+    {
+        return false;
+    }
+    else if (block.timestamp <= prev_block.timestamp)
+    {
+        return false;
+    }
+    return true;
 }
